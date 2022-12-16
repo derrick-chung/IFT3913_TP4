@@ -15,10 +15,12 @@ class TestCurrencyConvertor {
     CurrencyConversion conversion;
     CurrencyConvertor convertor;
     String[] currencies;
+    String[] numCurrencies;
 
     @BeforeEach
     void setUp() {
         currencies = new String[]{"CAD", "USD", "GBP", "EUR", "CHF", "INR", "AUD"};
+        numCurrencies= new String[]{"124","840","826","978","756","356","036"};
         manager = new OfflineJsonWorker();
         conversion = manager.parser();
     }
@@ -94,6 +96,40 @@ class TestCurrencyConvertor {
             pass = false;
         }
         assertFalse(pass, resultMessage);
+    }
+    //Blackbox
+    @Test
+    void convertRejectedCurrencyDomainTest3() {
+        boolean pass = true;
+        try {
+            for (String fromCurr :
+                    currencies) {
+                for (String toCurr:
+                     currencies) {
+                    convertor.convert(1, fromCurr.toLowerCase(),toCurr.toLowerCase(),conversion);
+                }
+            }
+        } catch (ParseException PE) {
+            pass = false;
+        }
+        assertFalse(pass);
+    }
+    //Blackbox
+    @Test
+    void convertRejectedCurrencyDomainTest4() {
+        boolean pass = true;
+        try {
+            for (String fromCurr :
+                    numCurrencies) {
+                for (String toCurr:
+                        numCurrencies) {
+                    convertor.convert(1, fromCurr,toCurr,conversion);
+                }
+            }
+        } catch (ParseException PE) {
+            pass = false;
+        }
+        assertFalse(pass);
     }
 
     @Test
