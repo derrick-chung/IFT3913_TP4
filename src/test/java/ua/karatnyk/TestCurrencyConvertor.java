@@ -13,11 +13,25 @@ public class TestCurrencyConvertor {
     CurrencyConvertor convertor;
 
     public void BlackBoxTest() {
+        String[] currencies = new String[]{"CAD", "USD", "GBP", "EUR", "CHF", "INR", "AUD"};
         try {
-            convertor.convert(0, "USD", "CAD", conversion);
-            convertor.convert(10000, "USD", "CAD", conversion);
-            convertor.convert(0, "CAD", "USD", conversion);
-            convertor.convert(10000, "USD", "CAD", conversion);
+
+            for (String fromCurr :
+                    currencies) {
+                for (String toCurr :
+                        currencies) {
+                    for (double i = 0; i <= 10000; i++) {
+                        double result = convertor.convert(i, fromCurr, toCurr, conversion);
+                        if (i == 0 || i == 10000)
+                            System.out.println(i + " " + fromCurr + " = " + result + " " + toCurr);
+                    }
+                    convertor.convert(-1, fromCurr, toCurr, conversion);
+                    convertor.convert(10001, fromCurr, toCurr, conversion);
+                    convertor.convert(100.60, fromCurr, toCurr, conversion);
+                }
+                convertor.convert(1, fromCurr, "bidon", conversion);
+                convertor.convert(1, "bidon", fromCurr, conversion);
+            }
         } catch (ParseException PE) {
             PE.printStackTrace();
         }
