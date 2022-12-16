@@ -11,7 +11,6 @@ import java.text.ParseException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TestCurrencyConvertor {
-    private static boolean setUpIsDone = false;
     OfflineJsonWorker manager;
     CurrencyConversion conversion;
     CurrencyConvertor convertor;
@@ -19,22 +18,11 @@ class TestCurrencyConvertor {
 
     @BeforeEach
     void setUp() {
-        if (setUpIsDone) {
-            return;
-        }
         currencies = new String[]{"CAD", "USD", "GBP", "EUR", "CHF", "INR", "AUD"};
         manager = new OfflineJsonWorker();
         conversion = manager.parser();
-        setUpIsDone = true;
     }
-
-    @Test
-    void BlackBoxTest() {
-      convertAcceptedAmountDomainTest();
-      convertRejectedAmountDomainTest();
-      convertRejectedCurrencyDomainTest();
-    }
-
+    //Blackbox
     @Test
     void convertAcceptedAmountDomainTest() {
         boolean pass = true;
@@ -53,11 +41,11 @@ class TestCurrencyConvertor {
         }
         assertTrue(pass);
     }
-
+    //Blackbox
     @Test
     void convertRejectedAmountDomainTest() {
         boolean pass = true;
-        String resultMessage="";
+        String resultMessage = "";
         try {
             for (String fromCurr :
                     currencies) {
@@ -65,18 +53,18 @@ class TestCurrencyConvertor {
                         currencies) {
                     double resultUnder = convertor.convert(-1, fromCurr, toCurr, conversion);
                     double resultOver = convertor.convert(10001, fromCurr, toCurr, conversion);
-                    resultMessage += "-1 "+fromCurr+" = "+Double.toString(resultUnder)+" "+toCurr+
-                                   "; 10001 "+fromCurr+" = "+Double.toString(resultOver)+" "+toCurr+"\n";
+                    resultMessage += "-1 " + fromCurr + " = " + Double.toString(resultUnder) + " " + toCurr +
+                            "; 10001 " + fromCurr + " = " + Double.toString(resultOver) + " " + toCurr + "\n";
                 }
             }
         } catch (ParseException PE) {
             pass = false;
         }
-        assertFalse(pass,resultMessage);
+        assertFalse(pass, resultMessage);
     }
-
+    //Blackbox
     @Test
-    void convertRejectedCurrencyDomainTest() {
+    void convertRejectedCurrencyDomainTest1() {
         boolean pass = true;
         try {
             for (String currency :
@@ -89,15 +77,33 @@ class TestCurrencyConvertor {
         }
         assertFalse(pass);
     }
+    //Blackbox
+    @Test
+    void convertRejectedCurrencyDomainTest2() {
+        boolean pass = true;
+        String resultMessage = "";
+        try {
+            for (String currency :
+                    currencies) {
+                double resultTo = convertor.convert(1, currency, "FJD", conversion);
+                double resultFrom = convertor.convert(1, "FJD", currency, conversion);
+                resultMessage += "1 " + currency + " = " + Double.toString(resultTo) + " FJD" +
+                        "; 1 FJD = " + Double.toString(resultFrom) + " " + currency + "\n";
+            }
+        } catch (ParseException PE) {
+            pass = false;
+        }
+        assertFalse(pass, resultMessage);
+    }
 
     @Test
-    void whiteBoxTest(){
+    void whiteBoxTest() {
         //White Box Tests
         assertAll(
                 //Fail premiere condition
-                () -> assertThrows(ParseException.class, () -> convertor.convert(1, "USD", "pouet",  conversion)),
+                () -> assertThrows(ParseException.class, () -> convertor.convert(1, "USD", "pouet", conversion)),
                 //Fail deuxieme condition
-                () ->  assertThrows(ParseException.class, () -> convertor.convert(1,"pouet", "CAD", conversion)),
+                () -> assertThrows(ParseException.class, () -> convertor.convert(1, "pouet", "CAD", conversion)),
                 //Success AKA normal path
                 () -> assertDoesNotThrow(() -> convertor.convert(0, "USD", "CAD", conversion))
         );
