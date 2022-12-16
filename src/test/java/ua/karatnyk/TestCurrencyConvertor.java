@@ -89,4 +89,18 @@ class TestCurrencyConvertor {
         }
         assertFalse(pass);
     }
+
+    @Test
+    void whiteBoxTest(){
+        //White Box Tests
+        assertAll(
+                //Fail premiere condition
+                () -> assertThrows(ParseException.class, () -> convertor.convert(1, "USD", "pouet",  conversion)),
+                //Fail deuxieme condition
+                () ->  assertThrows(ParseException.class, () -> convertor.convert(1,"pouet", "CAD", conversion)),
+                //Success AKA normal path
+                () -> assertDoesNotThrow(() -> convertor.convert(0, "USD", "CAD", conversion))
+        );
+    }
+
 }
